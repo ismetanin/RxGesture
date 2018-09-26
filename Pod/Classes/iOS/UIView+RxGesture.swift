@@ -50,7 +50,7 @@ extension Reactive where Base: UIView {
                 control.addGestureRecognizer(tap)
                 gestures.append(
                     (tap, tap.rx.event.map {_ in RxGestureTypeOption.tap}
-                        .bindNext(observer.onNext))
+                        .bind(onNext: observer.onNext))
                 )
             }
 			
@@ -61,7 +61,7 @@ extension Reactive where Base: UIView {
 				control.addGestureRecognizer(tap)
 				gestures.append(
 					(tap, tap.rx.event.map {_ in RxGestureTypeOption.tap}
-						.bindNext(observer.onNext))
+                        .bind(onNext: observer.onNext))
 				)
 			}
 			
@@ -74,7 +74,7 @@ extension Reactive where Base: UIView {
                         control.addGestureRecognizer(swipe)
                         gestures.append(
                             (swipe, swipe.rx.event.map {_ in direction}
-                                .bindNext(observer.onNext))
+                                .bind(onNext: observer.onNext))
                         )
                     }
                 }
@@ -86,7 +86,7 @@ extension Reactive where Base: UIView {
                 control.addGestureRecognizer(press)
                 gestures.append(
                     (press, press.rx.event.map {_ in RxGestureTypeOption.longPress}
-                        .bindNext(observer.onNext))
+                        .bind(onNext: observer.onNext))
                 )
             }
             
@@ -104,7 +104,7 @@ extension Reactive where Base: UIView {
                 }
                 
                 //observable
-                let panEvent = recognizer.rx.event.shareReplay(1)
+                let panEvent = recognizer.rx.event.share(replay: 1)
                 
                 //panning
                 for panGesture in type where panGesture == .pan(.any) {
@@ -129,7 +129,7 @@ extension Reactive where Base: UIView {
                         }
                         
                         guard config.translation != .zero && config.velocity != .zero else {
-                            gestures.append((recognizer, panObservable.bindNext(observer.onNext)))
+                            gestures.append((recognizer, panObservable.bind(onNext: observer.onNext)))
                             break
                         }
                         
@@ -142,7 +142,7 @@ extension Reactive where Base: UIView {
                                 default: return false
                                 }
                             }
-                            .bindNext(observer.onNext))
+                            .bind(onNext: observer.onNext))
                         )
                     default: break
                     }
@@ -164,7 +164,7 @@ extension Reactive where Base: UIView {
                 }
                 
                 //observable
-                let rotateEvent = recognizer.rx.event.shareReplay(1)
+                let rotateEvent = recognizer.rx.event.share(replay: 1)
                 
                 //rotating
                 for rotateGesture in type where rotateGesture == .rotate(.any) {
@@ -185,7 +185,7 @@ extension Reactive where Base: UIView {
                         }
                         
                         guard config.rotation != 0 else {
-                            gestures.append((recognizer, rotateObservable.bindNext(observer.onNext)))
+                            gestures.append((recognizer, rotateObservable.bind(onNext: observer.onNext)))
                             break
                         }
                         
@@ -197,7 +197,7 @@ extension Reactive where Base: UIView {
                                 default: return false
                                 }
                             }
-                            .bindNext(observer.onNext))
+                            .bind(onNext: observer.onNext))
                         )
                     default: break
                     }
@@ -219,7 +219,7 @@ extension Reactive where Base: UIView {
         return ControlEvent(events: source)
     }
     
-    private func direction(forType type: RxGestureTypeOption) -> UISwipeGestureRecognizerDirection? {
+    private func direction(forType type: RxGestureTypeOption) -> UISwipeGestureRecognizer.Direction? {
         if type == .swipeLeft  { return .left  }
         if type == .swipeRight { return .right }
         if type == .swipeUp    { return .up    }
